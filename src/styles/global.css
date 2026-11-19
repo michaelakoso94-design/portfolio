@@ -1,10 +1,15 @@
 :root {
-  --bg: #f3f0e8;
-  --paper: #fbf9f4;
-  --ink: #151413;
-  --ink-2: #57534c;
-  --line: #d9d4c7;
-  --accent: #ffd60a;
+  /* Michaela's brand colors, taken from iamkoso.com */
+  --lilac: #e8c4f2;
+  --lime: #ecf241;
+  --orange: #f2b33d;
+  --dark: #141414;
+  --bg: var(--lilac);
+  --paper: #ffffff;
+  --ink: #272727;
+  --ink-2: #4d4452;
+  --line: #c9a6d4;
+  --accent: var(--lime);
   --sans: 'Inter Tight', system-ui, sans-serif;
   --serif: 'Instrument Serif', Georgia, serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;

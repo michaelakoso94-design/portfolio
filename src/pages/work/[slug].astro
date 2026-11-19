@@ -75,7 +75,8 @@ const { Content } = await render(entry);
   .label { color: var(--ink-2); margin: 0 0 14px; }
   .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
   .cards div { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
-  .cards .out { background: var(--a); border-color: var(--a); }
+  .cards .out { background: var(--dark); border-color: var(--dark); color: #fafaff; }
+  .cards .out .mono { color: var(--lime); }
   .cards .mono { display: block; margin-bottom: 10px; font-weight: 500; }
   .cards p { margin: 0; font-size: 16px; line-height: 1.5; }
   @media (max-width: 860px) { .cards { grid-template-columns: 1fr; } }
@@ -83,7 +84,7 @@ const { Content } = await render(entry);
   .body { padding-top: 40px; }
   .prose { max-width: 680px; margin-left: auto; margin-right: max(0px, calc((100% - 680px) / 2 - 120px)); }
   .prose :global(h2) { font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.02em; margin: 64px 0 16px; font-weight: 600; }
-  .prose :global(h2::before) { content: ''; display: block; width: 28px; height: 4px; background: var(--a); margin-bottom: 16px; }
+  .prose :global(h2::before) { content: ''; display: block; width: 28px; height: 4px; background: var(--ink); margin-bottom: 16px; }
   .prose :global(p), .prose :global(li) { font-size: 18px; line-height: 1.65; }
   .prose :global(strong) { font-weight: 600; }
   .prose :global(ol), .prose :global(ul) { padding-left: 1.2em; }

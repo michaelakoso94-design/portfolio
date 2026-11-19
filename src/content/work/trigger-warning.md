@@ -8,7 +8,7 @@ tools: [Figma, Claude Code, Vercel]
 tags: [Interactive, Creative coding, Installation]
 badge: TISFF 2026 Official Selection
 order: 1
-accent: "#d9ff3a"
+accent: "#ecf241"
 liveUrl: https://michaela-project.vercel.app/window
 liveLabel: Open the live experience
 tldr:

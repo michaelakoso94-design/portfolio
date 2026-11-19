@@ -83,15 +83,15 @@ const { word = 'KOSO' } = Astro.props;
           let ch: string;
           if (h > 0.15) {
             ch = glyph[i];
-            ctx.fillStyle = h > 0.55 ? '#151413' : '#8a7a1a';
+            ctx.fillStyle = '#b7bb33';
             if (h > 0.55) {
-              ctx.fillStyle = '#ffd60a';
+              ctx.fillStyle = '#ecf241';
               ctx.fillRect(x * cw, y * cell, cw, cell);
-              ctx.fillStyle = '#151413';
+              ctx.fillStyle = '#141414';
             }
           } else {
             ch = RAMP[Math.min(RAMP.length - 1, Math.floor(b * RAMP.length))];
-            ctx.fillStyle = b > 0.5 ? '#151413' : '#a39e93';
+            ctx.fillStyle = b > 0.5 ? '#fafaff' : '#4a4a4a';
           }
           if (ch !== ' ') ctx.fillText(ch, x * cw, y * cell);
         }
@@ -165,8 +165,8 @@ const { word = 'KOSO' } = Astro.props;
     position: relative;
     width: 100%;
     height: clamp(220px, 34vw, 420px);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
     cursor: crosshair;
     touch-action: pan-y;
     user-select: none;
@@ -174,7 +174,7 @@ const { word = 'KOSO' } = Astro.props;
   canvas { position: absolute; inset: 0; }
   .hint {
     position: absolute; right: 0; bottom: -30px; margin: 0;
-    color: var(--ink-2); font-size: 11px; display: flex; align-items: center; gap: 8px;
+    color: #9a9a9a; font-size: 11px; display: flex; align-items: center; gap: 8px;
   }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #ffd60a44; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px #ecf24144; }
 </style>

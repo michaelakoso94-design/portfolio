@@ -8,7 +8,7 @@ role: [Desktop research, Information architecture, Product design]
 tools: [Figma, Claude Code]
 tags: [Product design, Data UX, News]
 order: 2
-accent: "#7ee0c3"
+accent: "#f2b33d"
 tldr:
   problem: Readers come with different questions. Some know the team, some only remember a date or a stadium. A schedule sorted by date makes all of them scan long lists.
   solution: One board with four entry points. Hover or tap on any team, date, stage or stadium and every related match lights up while the rest fades back.

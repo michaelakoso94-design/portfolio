@@ -9,7 +9,7 @@ tools: [Notion, Figma]
 tags: [Mobile app, Gamification]
 order: 4
 featured: false
-accent: "#ffb38a"
+accent: "#f2b33d"
 tldr:
   problem: The Kiryat Motzkin zoo felt outdated, information signs were faded, and families struggled with crowds, long walks and lines.
   solution: A family app with reliable animal content, event updates, a clear map, scheduling and a gamified layer built with the Octalysis framework.

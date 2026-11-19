@@ -16,7 +16,7 @@ const work = defineCollection({
     order: z.number(),
     featured: z.boolean().default(true),
     cover: z.string().optional(),
-    accent: z.string().default('#ffd60a'),
+    accent: z.string().default('#ecf241'),
     liveUrl: z.string().optional(),
     liveLabel: z.string().optional(),
     tldr: z.object({

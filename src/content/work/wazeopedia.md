@@ -8,7 +8,7 @@ role: [UX research, Information architecture, UX/UI design]
 tools: [Google Forms, Figma]
 tags: [UX research, Web + App, Redesign]
 order: 3
-accent: "#9cc7ff"
+accent: "#ecf241"
 tldr:
   problem: Wazeopedia is meant to be the trusted source for about 60K monthly users from the Waze editors community, but it felt outdated and hard to use, so editors moved to forums and Facebook.
   solution: A search first home page with forgiving search, subject pages built as a learning path, and the map editor moved into a streamlined mobile experience.

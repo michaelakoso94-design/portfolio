@@ -27,6 +27,7 @@ const other = all.filter((p) => !p.data.featured);
     </div>
   </section>
 
+  <div class="dark">
   <section class="wrap field">
     <AsciiField word="KOSO" />
   </section>
@@ -80,6 +81,7 @@ const other = all.filter((p) => !p.data.featured);
       </div>
     )}
   </section>
+  </div>
 </Base>
 
 <style>
@@ -99,6 +101,13 @@ const other = all.filter((p) => !p.data.featured);
   .intro p { max-width: 46ch; margin: 0; font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-2); }
   .cta { display: flex; gap: 10px; flex-wrap: wrap; }
 
+  .dark {
+    background: var(--dark); color: #fafaff; padding: 72px 0 120px;
+    --ink: #fafaff; --ink-2: #a8a3ab; --line: #333;
+  }
+  .dark .tag { color: var(--lime); border-color: #4a4a20; }
+  .dark .tag.badge { background: var(--lime); color: var(--dark); border-color: var(--lime); }
+  .dark .skills h3 { color: var(--lime); }
   .field { margin-bottom: 72px; }
 
   .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding-bottom: clamp(64px, 10vw, 120px); }
