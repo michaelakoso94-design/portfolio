@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import Contact from '../components/Contact.astro';
+
+interface Props { title?: string; description?: string; }
+const {
+  title = 'Michaela Koso · Product Designer',
+  description = 'Product designer working across research, interaction, visual systems and code.',
+} = Astro.props;
+const path = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap row">
+      <a href="/" class="logo" aria-label="Michaela Koso, home">KOSO<span>*</span></a>
+      <nav aria-label="Main">
+        <a href="/#work" class:list={{ on: path.startsWith('/work') }}>Work</a>
+        <a href="/about" class:list={{ on: path.startsWith('/about') }}>About</a>
+        <a href="https://www.linkedin.com/in/michaela-koso-4162a818a/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#contact" class="pill">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main><slot /></main>
+
+  <Contact />
+
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>
+
+<style>
+  .top {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-weight: 700; letter-spacing: 0.02em; text-decoration: none; font-size: 18px; }
+  .logo span { color: var(--ink); display: inline-block; margin-left: 2px; transition: transform .6s ease; }
+  .logo:hover span { transform: rotate(180deg); }
+  nav { display: flex; gap: clamp(12px, 3vw, 28px); align-items: center; font-size: 15px; }
+  nav a { text-decoration: none; color: var(--ink-2); }
+  nav a:hover, nav a.on { color: var(--ink); }
+  nav .pill { color: var(--ink); border: 1px solid var(--ink); padding: 6px 14px; border-radius: 99px; }
+  nav .pill:hover { background: var(--ink); color: var(--bg); }
+  @media (max-width: 560px) {
+    nav a[target] { display: none; }
+  }
+</style>

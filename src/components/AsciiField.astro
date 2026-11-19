@@ -1,0 +1,180 @@
+---
+// Interactive ASCII field. The word is drawn as text density; the cursor
+// "disrupts" nearby characters and a click/tap sends a glitch pulse.
+// A small nod to Trigger War-ning: a system that keeps working while disrupted.
+interface Props { word?: string; }
+const { word = 'KOSO' } = Astro.props;
+---
+<div class="ascii" data-word={word}>
+  <canvas aria-hidden="true"></canvas>
+  <p class="mono hint"><span class="dot"></span>Move to disrupt · click to glitch</p>
+</div>
+
+<script>
+  const RAMP = ' .·:-=+*%#@';
+  const NOISE = '01<>/\\[]{}#@%&$?!';
+
+  document.querySelectorAll<HTMLDivElement>('.ascii').forEach((root) => {
+    const canvas = root.querySelector('canvas')!;
+    const ctx = canvas.getContext('2d')!;
+    const word = root.dataset.word || 'KOSO';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let W = 0, H = 0, cols = 0, rows = 0, cell = 12, dpr = 1;
+    let base: number[] = [];      // brightness 0..1 per cell
+    let heat: number[] = [];      // disruption 0..1 per cell
+    let glyph: string[] = [];     // current noise glyph per cell
+    const mouse = { x: -999, y: -999, active: false };
+    const pulses: { x: number; y: number; r: number }[] = [];
+    let running = false;
+    let t = 0;
+
+    function layout() {
+      const rect = root.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = rect.width; H = rect.height;
+      cell = W < 600 ? 9 : W < 1000 ? 11 : 12;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      cols = Math.floor(W / (cell * 0.62));
+      rows = Math.floor(H / cell);
+
+      // Sample the word from an offscreen canvas.
+      const off = document.createElement('canvas');
+      off.width = cols; off.height = rows;
+      const o = off.getContext('2d')!;
+      o.fillStyle = '#000'; o.fillRect(0, 0, cols, rows);
+      o.fillStyle = '#fff';
+      o.textAlign = 'center'; o.textBaseline = 'middle';
+      // Characters are taller than wide, so squash the font vertically.
+      o.save();
+      o.scale(1, 0.62);
+      let size = rows * 1.25;
+      o.font = `800 ${size}px "Inter Tight", system-ui, sans-serif`;
+      while (o.measureText(word).width > cols * 0.94 && size > 4) {
+        size -= 2; o.font = `800 ${size}px "Inter Tight", system-ui, sans-serif`;
+      }
+      o.fillText(word, cols / 2, rows / 2 / 0.62 + size * 0.04);
+      o.restore();
+      const data = o.getImageData(0, 0, cols, rows).data;
+      base = []; heat = []; glyph = [];
+      for (let i = 0; i < cols * rows; i++) {
+        base.push(data[i * 4] / 255);
+        heat.push(0);
+        glyph.push(NOISE[(Math.random() * NOISE.length) | 0]);
+      }
+      draw();
+    }
+
+    function draw() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.font = `500 ${cell}px "JetBrains Mono", ui-monospace, monospace`;
+      ctx.textBaseline = 'top';
+      const cw = W / cols;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = y * cols + x;
+          const h = heat[i];
+          let b = base[i];
+          // subtle background grain so the field feels alive
+          const grain = (Math.sin(x * 0.35 + t * 0.02) + Math.cos(y * 0.5 - t * 0.015)) * 0.04 + 0.06;
+          if (b < 0.05) b = Math.max(0, grain);
+          let ch: string;
+          if (h > 0.15) {
+            ch = glyph[i];
+            ctx.fillStyle = h > 0.55 ? '#151413' : '#8a7a1a';
+            if (h > 0.55) {
+              ctx.fillStyle = '#ffd60a';
+              ctx.fillRect(x * cw, y * cell, cw, cell);
+              ctx.fillStyle = '#151413';
+            }
+          } else {
+            ch = RAMP[Math.min(RAMP.length - 1, Math.floor(b * RAMP.length))];
+            ctx.fillStyle = b > 0.5 ? '#151413' : '#a39e93';
+          }
+          if (ch !== ' ') ctx.fillText(ch, x * cw, y * cell);
+        }
+      }
+    }
+
+    function step() {
+      t++;
+      const cw = W / cols;
+      let any = false;
+      for (const p of pulses) p.r += Math.max(W, H) * 0.018;
+      while (pulses.length && pulses[0].r > Math.hypot(W, H)) pulses.shift();
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = y * cols + x;
+          const px = x * cw, py = y * cell;
+          let target = 0;
+          if (mouse.active) {
+            const d = Math.hypot(px - mouse.x, py - mouse.y);
+            const R = Math.min(140, W * 0.18);
+            if (d < R) target = Math.max(target, (1 - d / R) * (0.7 + Math.random() * 0.5));
+          }
+          for (const p of pulses) {
+            const d = Math.abs(Math.hypot(px - p.x, py - p.y) - p.r);
+            if (d < 40) target = Math.max(target, (1 - d / 40) * (base[i] > 0.4 ? 1 : 0.6));
+          }
+          heat[i] = Math.max(target, heat[i] * 0.9);
+          if (heat[i] > 0.15 && Math.random() < 0.3) glyph[i] = NOISE[(Math.random() * NOISE.length) | 0];
+          if (heat[i] > 0.01) any = true;
+        }
+      }
+      draw();
+      if (any || mouse.active || pulses.length) requestAnimationFrame(step);
+      else running = false;
+    }
+
+    function kick() {
+      if (reduce || running) return;
+      running = true;
+      requestAnimationFrame(step);
+    }
+
+    function pos(e: PointerEvent) {
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    root.addEventListener('pointermove', (e) => {
+      const p = pos(e); mouse.x = p.x; mouse.y = p.y; mouse.active = true; kick();
+    });
+    root.addEventListener('pointerleave', () => { mouse.active = false; });
+    root.addEventListener('pointerdown', (e) => {
+      const p = pos(e); pulses.push({ x: p.x, y: p.y, r: 0 });
+      if (e.pointerType !== 'mouse') { mouse.active = false; }
+      kick();
+    });
+
+    const ro = new ResizeObserver(() => layout());
+    ro.observe(root);
+    // Re-layout when web fonts finish so the word uses the right typeface.
+    document.fonts?.ready.then(layout);
+    // A first pulse so visitors see it is alive.
+    setTimeout(() => {
+      if (!reduce) { pulses.push({ x: W * 0.15, y: H * 0.5, r: 0 }); kick(); }
+    }, 900);
+  });
+</script>
+
+<style>
+  .ascii {
+    position: relative;
+    width: 100%;
+    height: clamp(220px, 34vw, 420px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    cursor: crosshair;
+    touch-action: pan-y;
+    user-select: none;
+  }
+  canvas { position: absolute; inset: 0; }
+  .hint {
+    position: absolute; right: 0; bottom: -30px; margin: 0;
+    color: var(--ink-2); font-size: 11px; display: flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #ffd60a44; }
+</style>

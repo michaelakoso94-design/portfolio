@@ -1,0 +1,99 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return all.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: all[(i + 1) % all.length] },
+  }));
+}
+
+const { entry, next } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+---
+<Base title={`${d.title} · Michaela Koso`} description={d.hook}>
+  <article style={`--a:${d.accent}`}>
+    <header class="wrap hero">
+      <a href="/#work" class="back mono">← All work</a>
+      <div class="tags">
+        {d.badge && <span class="tag badge">★ {d.badge}</span>}
+        {d.tags.map((t) => <span class="tag">{t}</span>)}
+      </div>
+      <h1>{d.title}</h1>
+      <p class="hook">{d.hook}</p>
+
+      <dl class="facts">
+        <div><dt class="mono">Client</dt><dd>{d.client}</dd></div>
+        <div><dt class="mono">My role</dt><dd>{d.role.join(', ')}</dd></div>
+        <div><dt class="mono">Tools</dt><dd>{d.tools.join(', ')}</dd></div>
+        <div><dt class="mono">Timeline</dt><dd>{[d.duration, d.year].filter(Boolean).join(' · ') || '—'}</dd></div>
+      </dl>
+    </header>
+
+    <div class="wrap"><Cover src={d.cover} title={d.title} accent={d.accent} ratio="16 / 8" /></div>
+
+    <section class="wrap tldr" aria-label="Summary">
+      <p class="mono label">TL;DR · 30 second read</p>
+      <div class="cards">
+        <div><span class="mono">Problem</span><p>{d.tldr.problem}</p></div>
+        <div><span class="mono">Solution</span><p>{d.tldr.solution}</p></div>
+        <div class="out"><span class="mono">Outcome</span><p>{d.tldr.outcome}</p></div>
+      </div>
+      {d.liveUrl && <a class="btn" href={d.liveUrl} target="_blank" rel="noopener">{d.liveLabel ?? 'View live'} ↗</a>}
+    </section>
+
+    <section class="wrap body">
+      <div class="prose"><Content /></div>
+    </section>
+
+    <nav class="wrap next" aria-label="Next project">
+      <a href={`/work/${next.id}`}>
+        <span class="mono">Next case study</span>
+        <strong>{next.data.title} <span class="arr">→</span></strong>
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .hero { padding-top: clamp(32px, 6vw, 80px); padding-bottom: 40px; }
+  .back { text-decoration: none; color: var(--ink-2); display: inline-block; margin-bottom: 32px; }
+  .back:hover { color: var(--ink); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  h1 { font-size: clamp(42px, 7vw, 96px); line-height: 0.98; letter-spacing: -0.035em; margin: 0 0 18px; font-weight: 600; }
+  .hook { font-family: var(--serif); font-style: italic; font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; margin: 0 0 40px; max-width: 32ch; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 0; border-top: 1px solid var(--line); padding-top: 20px; }
+  .facts dt { color: var(--ink-2); margin-bottom: 6px; font-size: 11px; }
+  .facts dd { margin: 0; font-size: 15px; }
+  @media (max-width: 760px) { .facts { grid-template-columns: 1fr 1fr; } }
+
+  .tldr { padding-top: 56px; padding-bottom: 24px; }
+  .label { color: var(--ink-2); margin: 0 0 14px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .cards div { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+  .cards .out { background: var(--a); border-color: var(--a); }
+  .cards .mono { display: block; margin-bottom: 10px; font-weight: 500; }
+  .cards p { margin: 0; font-size: 16px; line-height: 1.5; }
+  @media (max-width: 860px) { .cards { grid-template-columns: 1fr; } }
+
+  .body { padding-top: 40px; }
+  .prose { max-width: 680px; margin-left: auto; margin-right: max(0px, calc((100% - 680px) / 2 - 120px)); }
+  .prose :global(h2) { font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.02em; margin: 64px 0 16px; font-weight: 600; }
+  .prose :global(h2::before) { content: ''; display: block; width: 28px; height: 4px; background: var(--a); margin-bottom: 16px; }
+  .prose :global(p), .prose :global(li) { font-size: 18px; line-height: 1.65; }
+  .prose :global(strong) { font-weight: 600; }
+  .prose :global(ol), .prose :global(ul) { padding-left: 1.2em; }
+  .prose :global(li) { margin-bottom: 8px; }
+  .prose :global(img) { border-radius: 6px; margin: 32px 0; }
+
+  .next { margin-top: 96px; }
+  .next a { display: block; border-top: 1px solid var(--ink); padding-top: 20px; text-decoration: none; }
+  .next .mono { color: var(--ink-2); }
+  .next strong { display: block; font-size: clamp(32px, 5vw, 64px); letter-spacing: -0.03em; margin-top: 8px; font-weight: 600; }
+  .arr { display: inline-block; transition: transform .3s ease; }
+  .next a:hover .arr { transform: translateX(10px); }
+</style>

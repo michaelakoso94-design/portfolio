@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="About · Michaela Koso">
+  <section class="wrap about">
+    <div class="photo">
+      <!-- TODO Michaela: put your photo at /public/images/me.jpg and swap this block for <img src="/images/me.jpg" alt="Michaela Koso" /> -->
+      <div class="ph mono">photo</div>
+    </div>
+    <div class="txt">
+      <p class="mono kicker">About</p>
+      <h1>Hi, I'm <em>KOSO.</em></h1>
+      <p class="lead">
+        A UX/UI and product designer with a background in visual communication. I'm curious about a lot of things,
+        and I like having the answers. That's why I'm not afraid of complex systems or unusual ideas.
+      </p>
+      <p>
+        These days I design and build interactive products, from news experiences for ynet to installation work
+        like Trigger War-ning. I like being involved from the research all the way to the code.
+      </p>
+      <p>Outside of design you'll find me with the people I love, or experimenting in the kitchen.</p>
+
+      <!-- TODO Michaela: add experience + education here, and a link to your CV (put the PDF at /public/cv.pdf) -->
+
+      <div class="cta">
+        <a class="btn" href="#contact">Get in touch</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/michaela-koso-4162a818a/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); padding-top: clamp(40px, 8vw, 110px); align-items: start; }
+  .ph { aspect-ratio: 4 / 5; background: var(--accent); border-radius: 6px; display: grid; place-items: center; }
+  .kicker { color: var(--ink-2); margin: 0 0 18px; }
+  h1 { font-size: clamp(44px, 7vw, 96px); line-height: 0.98; letter-spacing: -0.035em; margin: 0 0 28px; font-weight: 600; }
+  h1 em { font-family: var(--serif); font-weight: 400; }
+  .lead { font-size: clamp(20px, 2vw, 24px); line-height: 1.45; }
+  p { font-size: 18px; max-width: 56ch; }
+  .cta { display: flex; gap: 10px; margin-top: 32px; flex-wrap: wrap; }
+  @media (max-width: 800px) { .about { grid-template-columns: 1fr; } .photo { max-width: 320px; } }
+</style>
